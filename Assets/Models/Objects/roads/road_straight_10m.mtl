@@ -1,0 +1,8 @@
+newmtl road_asphalt
+Kd 0.1981132 0.1981132 0.1981132
+d 1
+
+newmtl road_curb
+Kd 0.990566 0.8798229 0.0233624
+d 1
+

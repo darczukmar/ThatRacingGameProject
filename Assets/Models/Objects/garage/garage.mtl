@@ -1,0 +1,15 @@
+newmtl garage_door
+map_Kd garage_door.png
+Kd 1 1 1
+d 1
+
+newmtl wall_concrete
+map_Kd wall_concrete.png
+Kd 1 1 1
+d 1
+
+newmtl black+asphalt-512x512
+map_Kd black+asphalt-512x512.png
+Kd 1 1 1
+d 1
+
