@@ -11,9 +11,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/vehicleSelection.unity
     guid: af6d4273cd4ba174daa21d2e1352ba95
-  - enabled: 0
-    path: Assets/Scenes/raceTrack.unity
-    guid: 544070b95cc968d488a5f2ebc27dd9bd
   - enabled: 1
     path: Assets/Scenes/properTrack.unity
     guid: e90a9694e8a41d14c936f203c6f2eae6
