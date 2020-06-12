@@ -111,6 +111,8 @@ PlayerSettings:
   switchNVNShaderPoolsGranularity: 33554432
   switchNVNDefaultPoolsGranularity: 16777216
   switchNVNOtherPoolsGranularity: 16777216
+  stadiaPresentMode: 0
+  stadiaTargetFramerate: 0
   vulkanNumSwapchainBuffers: 3
   vulkanEnableSetSRGBWrite: 0
   m_SupportedAspectRatios:
@@ -576,7 +578,7 @@ PlayerSettings:
       daydreamIconBackground: {fileID: 0}
   cloudServicesEnabled:
     Build: 1
-    Collab: 1
+    Collab: 0
     UNet: 1
   luminIcon:
     m_Name: 
