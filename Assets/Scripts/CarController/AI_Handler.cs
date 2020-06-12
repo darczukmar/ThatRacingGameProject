@@ -15,7 +15,6 @@ public class AI_Handler : MonoBehaviour
     public GameObject rayHolderR;
     public GameObject rayHolderRF;
     public GameObject nextCheckpoint;
-    public GameObject Trailing;
 
     public int carIndex;
 
@@ -63,10 +62,24 @@ public class AI_Handler : MonoBehaviour
             Debug.DrawRay(rayHolderLF.transform.position, rayHolderLF.transform.forward * forwardRaycasDistance, Color.red);
             horizontalInput = Mathf.Clamp(horizontalInput + reactionStrFull + 0.1f / hitLF.distance / 2, -1f, 1f);
         }
+        if (Physics.Raycast(rayLF, out hitLF, forwardRaycasDistance/2) && hitLF.transform.CompareTag("PlayerMesh"))
+        {
+            Debug.DrawRay(rayHolderLF.transform.position, rayHolderLF.transform.forward * forwardRaycasDistance, Color.green);
+            horizontalInput = Mathf.Clamp(horizontalInput + reactionStrFull + 0.1f / hitLF.distance / 2, -1f, 1f);
+        }
+
+
+
 
         if (Physics.Raycast(rayL, out hitL, raycastdistance) && !hitL.transform.CompareTag("PlayerMesh"))
         {
             Debug.DrawRay(rayHolderL.transform.position, rayHolderL.transform.forward * raycastdistance, Color.red);
+
+            horizontalInput = Mathf.Clamp(horizontalInput + reactionStrHalf + 0.1f / hitL.distance / 2, -1f, 1f);
+        }
+        if (Physics.Raycast(rayL, out hitL, raycastdistance/2) && hitL.transform.CompareTag("PlayerMesh"))
+        {
+            Debug.DrawRay(rayHolderL.transform.position, rayHolderL.transform.forward * raycastdistance, Color.green);
 
             horizontalInput = Mathf.Clamp(horizontalInput + reactionStrHalf + 0.1f / hitL.distance / 2, -1f, 1f);
         }
@@ -80,10 +93,23 @@ public class AI_Handler : MonoBehaviour
             Debug.DrawRay(rayHolderRF.transform.position, rayHolderRF.transform.forward * forwardRaycasDistance, Color.red);
             horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrFull + 0.1f / -hitRF.distance / 2, -1f, 1f);
         }
+        if (Physics.Raycast(rayRF, out hitRF, forwardRaycasDistance/2) && hitRF.transform.CompareTag("PlayerMesh"))
+        {
+            Debug.DrawRay(rayHolderRF.transform.position, rayHolderRF.transform.forward * forwardRaycasDistance, Color.green);
+            horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrFull + 0.1f / -hitRF.distance / 2, -1f, 1f);
+        }
+
+
         if (Physics.Raycast(rayR, out hitR, raycastdistance) && !hitR.transform.CompareTag("PlayerMesh"))
         {
             //Debug.Log(hitR.distance);
             Debug.DrawRay(rayHolderR.transform.position, rayHolderR.transform.forward * raycastdistance, Color.red);
+            horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrHalf + 0.1f / -hitR.distance / 2, -1f, 1f);
+        }
+        if (Physics.Raycast(rayR, out hitR, raycastdistance/2) && hitR.transform.CompareTag("PlayerMesh"))
+        {
+            //Debug.Log(hitR.distance);
+            Debug.DrawRay(rayHolderR.transform.position, rayHolderR.transform.forward * raycastdistance, Color.green);
             horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrHalf + 0.1f / -hitR.distance / 2, -1f, 1f);
         }
 
