@@ -14,13 +14,15 @@ public class AI_Handler : MonoBehaviour
     public GameObject rayHolderLF;
     public GameObject rayHolderR;
     public GameObject rayHolderRF;
-    public GameObject nextCheckpoint;
+
+    public GameObject nextCheckpoint;              //next checkpoint assinged by Race Manager from race Array
+    public UnityEngine.Vector3 nextCheckpointTrue; //Random position chosen from box collider - Car is actually going here.
 
     public int carIndex;
 
     public float raycastdistance;
     public float forwardRaycasDistance;
-    [Range(0.0f, 0.1f)]
+    [Range(0.0f, 0.5f)]
     public float reactionStrFull;
     [Range(0.0f, 0.1f)]
     public float reactionStrHalf;
@@ -29,7 +31,7 @@ public class AI_Handler : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float verticalInput;
     float adjustAngle;
-
+    UnityEngine.Vector3 targetDir = UnityEngine.Vector3.zero;
     public void Awake()
     {
         car_Controller = this.gameObject.transform.GetComponent<Car_controller>();
@@ -51,16 +53,21 @@ public class AI_Handler : MonoBehaviour
 
         Ray rayForward = new Ray(this.transform.position, this.transform.forward * 5);
 
-        RaycastHit hitLF, hitL, hitR, hitRF,hitTrailing;
+        RaycastHit hitLF, hitL, hitR, hitRF;
 
-        UnityEngine.Vector3 targetDir;
+        
 
+        Debug.DrawRay(rayHolderL.transform.position, rayHolderL.transform.forward * raycastdistance, Color.red);
+        Debug.DrawRay(rayHolderLF.transform.position, rayHolderLF.transform.forward * forwardRaycasDistance, Color.red);
+        Debug.DrawRay(rayHolderRF.transform.position, rayHolderRF.transform.forward * forwardRaycasDistance, Color.red);
+        Debug.DrawRay(rayHolderR.transform.position, rayHolderR.transform.forward * raycastdistance, Color.red);
+        Debug.DrawRay(this.gameObject.transform.position,targetDir, Color.green);
 
 
         if (Physics.Raycast(rayLF, out hitLF, forwardRaycasDistance) && !hitLF.transform.CompareTag("PlayerMesh"))
         {
             Debug.DrawRay(rayHolderLF.transform.position, rayHolderLF.transform.forward * forwardRaycasDistance, Color.red);
-            horizontalInput = Mathf.Clamp(horizontalInput + reactionStrFull + 0.1f / hitLF.distance / 2, -1f, 1f);
+            horizontalInput = Mathf.Clamp(horizontalInput + reactionStrFull + 0.2f / hitLF.distance / 2, -1f, 1f);
         }
         if (Physics.Raycast(rayLF, out hitLF, forwardRaycasDistance/2) && hitLF.transform.CompareTag("PlayerMesh"))
         {
@@ -91,7 +98,7 @@ public class AI_Handler : MonoBehaviour
         if (Physics.Raycast(rayRF, out hitRF, forwardRaycasDistance) && !hitRF.transform.CompareTag("PlayerMesh"))
         {
             Debug.DrawRay(rayHolderRF.transform.position, rayHolderRF.transform.forward * forwardRaycasDistance, Color.red);
-            horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrFull + 0.1f / -hitRF.distance / 2, -1f, 1f);
+            horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrFull + 0.2f / -hitRF.distance / 2, -1f, 1f);
         }
         if (Physics.Raycast(rayRF, out hitRF, forwardRaycasDistance/2) && hitRF.transform.CompareTag("PlayerMesh"))
         {
@@ -112,26 +119,18 @@ public class AI_Handler : MonoBehaviour
             Debug.DrawRay(rayHolderR.transform.position, rayHolderR.transform.forward * raycastdistance, Color.green);
             horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrHalf + 0.1f / -hitR.distance / 2, -1f, 1f);
         }
-
-        /*
-        if(Physics.Raycast(rayForward,out hitTrailing, 10f,2))
-        {
-            if (hitTrailing.transform.CompareTag("PlayerMesh"))
-            {
-                Trailing = hitTrailing.transform.gameObject;
-                targetDir = hitTrailing.transform.position - this.gameObject.transform.position;
-                adjustAngle = UnityEngine.Vector3.SignedAngle(targetDir, this.gameObject.transform.forward, this.gameObject.transform.up);
-                horizontalInput = Mathf.Clamp(-adjustAngle / 90, -1, 1);
-            }
-
-        }
-        */
-
         if (hitL.transform == null && hitLF.transform == null && hitR.transform == null && hitRF.transform == null)
         {
-            targetDir = nextCheckpoint.transform.position - this.gameObject.transform.position;
+            if (nextCheckpointTrue == UnityEngine.Vector3.zero)
+            {
+                targetDir = nextCheckpoint.transform.position - this.gameObject.transform.position;
+            }
+            else
+            {
+                targetDir = nextCheckpointTrue - this.gameObject.transform.position;
+            }
+           
             adjustAngle = UnityEngine.Vector3.SignedAngle(targetDir, this.gameObject.transform.forward, this.gameObject.transform.up);
-            //Debug.Log(adjustAngle);
             horizontalInput = Mathf.Clamp(-adjustAngle / 90, -1, 1);
         }
         return horizontalInput;
@@ -139,10 +138,14 @@ public class AI_Handler : MonoBehaviour
     public float SpeedTester(float horizontalInput)
     {
         verticalInput = 1;
-        verticalInput = verticalInput - Mathf.Abs(horizontalInput)/2;
+        verticalInput = verticalInput - Mathf.Abs(horizontalInput)/1.4f;
 
 
         return verticalInput;
+    }
+    public void Start()
+    {
+        targetDir = nextCheckpoint.transform.position - this.gameObject.transform.position;
     }
     private void FixedUpdate()
     {

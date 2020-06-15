@@ -33,8 +33,8 @@ public class Race_manager : MonoBehaviour
         {
             thisCheckpoint = 0;
         }
-
-        car.nextCheckpoint = race[thisCheckpoint];
+       car.nextCheckpointTrue=  AI_Randomness.RandomPointInBounds(race[thisCheckpoint]);
+       car.nextCheckpoint = race[thisCheckpoint];
 
 
 
