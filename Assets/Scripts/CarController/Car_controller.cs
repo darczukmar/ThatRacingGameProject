@@ -19,8 +19,8 @@ public class Car_controller : MonoBehaviour
     public float maxSteerAngle = 30;
     public float motorForce = 50;
     public int brakePower = 200;
-    public bool isBraking = false;
     public double currentSpeed;
+    public bool isBraking = false;
     public bool AIControlled = false;
     public AI_Handler AI_handler;
 
@@ -28,7 +28,7 @@ public class Car_controller : MonoBehaviour
 
 
     private float trueSpeed;
-    private float horizontalInput;
+    public float horizontalInput;
     private float verticalInput;
     private float steering_angle;
     
@@ -48,8 +48,8 @@ public class Car_controller : MonoBehaviour
         }
         else
         {
-            
-            isBraking = Input.GetButton("Handbrake");
+
+            isBraking = AI_handler.BrakeFinding();
             horizontalInput = AI_handler.PathFinding();
             verticalInput = AI_handler.SpeedTester(horizontalInput);
         }
@@ -113,7 +113,6 @@ public class Car_controller : MonoBehaviour
         Handbrake();
         Accelerate(verticalInput);
         Steer(horizontalInput);
-       
         UpdateWheelPoses();
 
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -10,11 +11,17 @@ public class AI_Handler : MonoBehaviour
     public Car_controller car_Controller;
     public Race_manager race_Manager;
 
-    public GameObject rayHolderL, rayHolderLF, rayHolderR, rayHolderRF, nextCheckpoint;
-    public UnityEngine.Vector3 nextCheckpointTrue;
-    //next checkpoint is assinged by Race Manager from race Array
-    //Random position chosen from box collider - Car is actually going here.
-    public float raycastdistance, forwardRaycasDistance, adjustAngle;
+    public GameObject rayHolderL,             // rayHolders used for origin point of raycasts , can be easily adjustem in aditor.
+                    rayHolderLF,
+                    rayHolderR,
+                    rayHolderRF,
+                    nextCheckpoint;           //next checkpoint is assinged by Race Manager from race Array
+    public float raycastdistance,
+             forwardRaycasDistance,
+             adjustAngle,
+             responseTime;
+
+
     public int carIndex;
 
     [Range(0.0f, 0.5f)]
@@ -26,11 +33,14 @@ public class AI_Handler : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float verticalInput;
 
-    UnityEngine.Vector3 targetDir = UnityEngine.Vector3.zero;
+    public UnityEngine.Vector3 nextCheckpointTrue;                      //Random position chosen from box collider - Car is actually going here.
+    private UnityEngine.Vector3 targetDir = UnityEngine.Vector3.zero;    //Direction in which cars next objective is.
+
     public void Awake()
     {
         car_Controller = this.gameObject.transform.GetComponent<Car_controller>();
         race_Manager = GameObject.FindGameObjectWithTag("LogicHandler").GetComponent<Race_manager>();
+        targetDir = nextCheckpoint.transform.position - this.gameObject.transform.position;
     }
 
 
@@ -39,115 +49,65 @@ public class AI_Handler : MonoBehaviour
     {
 
 
-        // Raycasts for colider checking
-        // RaycastHit for getting transform of the hit victim
-        Ray rayLF = new Ray(rayHolderLF.transform.position, rayHolderLF.transform.forward * 5);
-        Ray rayL = new Ray(rayHolderL.transform.position, rayHolderL.transform.forward * 5);
-        Ray rayR = new Ray(rayHolderR.transform.position, rayHolderR.transform.forward * 5);
-        Ray rayRF = new Ray(rayHolderRF.transform.position, rayHolderRF.transform.forward * 5);
 
-        Ray rayForward = new Ray(this.transform.position, this.transform.forward * 5);
+        Ray rayLF = new Ray(rayHolderLF.transform.position, rayHolderLF.transform.forward * 5),              // Raycasts for colider checking
+            rayL = new Ray(rayHolderL.transform.position, rayHolderL.transform.forward * 5),
+            rayR = new Ray(rayHolderR.transform.position, rayHolderR.transform.forward * 5),
+            rayRF = new Ray(rayHolderRF.transform.position, rayHolderRF.transform.forward * 5);
 
-        RaycastHit hitLF, hitL, hitR, hitRF;
-
-
-
-        Debug.DrawRay(rayHolderL.transform.position, rayHolderL.transform.forward * raycastdistance, Color.red);
-        Debug.DrawRay(rayHolderLF.transform.position, rayHolderLF.transform.forward * forwardRaycasDistance, Color.red);
-        Debug.DrawRay(rayHolderRF.transform.position, rayHolderRF.transform.forward * forwardRaycasDistance, Color.red);
-        Debug.DrawRay(rayHolderR.transform.position, rayHolderR.transform.forward * raycastdistance, Color.red);
-        Debug.DrawRay(this.gameObject.transform.position, targetDir, Color.green);
-
-
-        if (Physics.Raycast(rayLF, out hitLF, forwardRaycasDistance) && !hitLF.transform.CompareTag("PlayerMesh"))
+        if (true)
         {
+            Debug.DrawRay(rayHolderL.transform.position, rayHolderL.transform.forward * raycastdistance, Color.red);
             Debug.DrawRay(rayHolderLF.transform.position, rayHolderLF.transform.forward * forwardRaycasDistance, Color.red);
-            horizontalInput = Mathf.Clamp(horizontalInput + reactionStrFull + 0.2f / hitLF.distance / 2, -1f, 1f);
-        }
-        if (Physics.Raycast(rayRF, out hitRF, forwardRaycasDistance) && !hitRF.transform.CompareTag("PlayerMesh"))
-        {
             Debug.DrawRay(rayHolderRF.transform.position, rayHolderRF.transform.forward * forwardRaycasDistance, Color.red);
-            horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrFull + 0.2f / -hitRF.distance / 2, -1f, 1f);
-            if (Physics.Raycast(rayR, out hitR, raycastdistance) && !hitR.transform.CompareTag("PlayerMesh"))
-            {
-
-                Debug.DrawRay(rayHolderR.transform.position, rayHolderR.transform.forward * raycastdistance, Color.red);
-                horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrHalf + 0.1f / -hitR.distance / 2, -1f, 1f);
-            }
-
-            if (Physics.Raycast(rayL, out hitL, raycastdistance) && !hitL.transform.CompareTag("PlayerMesh"))
-            {
-                Debug.DrawRay(rayHolderL.transform.position, rayHolderL.transform.forward * raycastdistance, Color.red);
-                horizontalInput = Mathf.Clamp(horizontalInput + reactionStrHalf + 0.1f / hitL.distance / 2, -1f, 1f);
-            }
-
-
-
-
-
-
-
-
-            if (Physics.Raycast(rayLF, out hitLF, forwardRaycasDistance / 2) && hitLF.transform.CompareTag("PlayerMesh"))
-            {
-                Debug.DrawRay(rayHolderLF.transform.position, rayHolderLF.transform.forward * forwardRaycasDistance, Color.green);
-                horizontalInput = Mathf.Clamp(horizontalInput + reactionStrFull + 0.1f / hitLF.distance / 2, -1f, 1f);
-            }
-            if (Physics.Raycast(rayL, out hitL, raycastdistance / 2) && hitL.transform.CompareTag("PlayerMesh"))
-            {
-                Debug.DrawRay(rayHolderL.transform.position, rayHolderL.transform.forward * raycastdistance, Color.green);
-
-                horizontalInput = Mathf.Clamp(horizontalInput + reactionStrHalf + 0.1f / hitL.distance / 2, -1f, 1f);
-            }
-            if (Physics.Raycast(rayRF, out hitRF, forwardRaycasDistance / 2) && hitRF.transform.CompareTag("PlayerMesh"))
-            {
-                Debug.DrawRay(rayHolderRF.transform.position, rayHolderRF.transform.forward * forwardRaycasDistance, Color.green);
-                horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrFull + 0.1f / -hitRF.distance / 2, -1f, 1f);
-            }
-            if (Physics.Raycast(rayR, out hitR, raycastdistance / 2) && hitR.transform.CompareTag("PlayerMesh"))
-            {
-                Debug.DrawRay(rayHolderR.transform.position, rayHolderR.transform.forward * raycastdistance, Color.green);
-                horizontalInput = Mathf.Clamp(horizontalInput + -reactionStrHalf + 0.1f / -hitR.distance / 2, -1f, 1f);
-            }
-
-
-            if (hitL.transform == null && hitLF.transform == null && hitR.transform == null && hitRF.transform == null)
-            {
-                if (nextCheckpointTrue == UnityEngine.Vector3.zero)
-                {
-                    targetDir = nextCheckpoint.transform.position - this.gameObject.transform.position;
-                }
-                else
-                {
-                    targetDir = nextCheckpointTrue - this.gameObject.transform.position;
-                }
-
-                adjustAngle = UnityEngine.Vector3.SignedAngle(targetDir, this.gameObject.transform.forward, this.gameObject.transform.up);
-                horizontalInput = Mathf.Clamp(-adjustAngle / 90, -1, 1);
-            }
-            
+            Debug.DrawRay(rayHolderR.transform.position, rayHolderR.transform.forward * raycastdistance, Color.red);
+            Debug.DrawRay(this.gameObject.transform.position, targetDir, Color.green);
         }
+        RaycastHit hitLF, hitL, hitR, hitRF;                                                                 // RaycastHit for getting transform of the hit victim
 
-        StartCoroutine(SmoothValues(100f, 40f, 2f));
+        AI_Additives.checkCollisions(rayLF, hitLF, forwardRaycasDistance, reactionStrFull, false, horizontalInput);
+        AI_Additives.checkCollisions(rayL, hitL, raycastdistance, reactionStrFull, false, horizontalInput);
+        AI_Additives.checkCollisions(rayRF, hitRF, forwardRaycasDistance, reactionStrFull, true, horizontalInput);
+        AI_Additives.checkCollisions(rayR, hitR, raycastdistance, reactionStrFull, true, horizontalInput);
 
-        return horizontalInput;
+        if (hitL.transform == null && hitLF.transform == null && hitR.transform == null && hitRF.transform == null)
+        {
+            if (nextCheckpointTrue == UnityEngine.Vector3.zero)
+            {
+                targetDir = nextCheckpoint.transform.position - this.gameObject.transform.position;
+            }
+            else
+            {
+                targetDir = nextCheckpointTrue - this.gameObject.transform.position;
+            }
+
+            adjustAngle = UnityEngine.Vector3.SignedAngle(targetDir, this.gameObject.transform.forward, this.gameObject.transform.up);
+            horizontalInput = Mathf.Clamp(-adjustAngle / 90, -1, 1);
+        }
+ 
+        return  horizontalInput;
     }
+    public bool BrakeFinding()
 
-
-
-
+    {
+        Ray rayForward = new Ray(this.transform.position, this.transform.forward * 5);
+        RaycastHit hitForward;
+        bool shouldBrake;
+        if (car_Controller.currentSpeed > 170 || Physics.Raycast(rayForward, out hitForward, 5f))
+            shouldBrake = true;
+        else
+            shouldBrake = false;
+        return shouldBrake;
+    }
     public float SpeedTester(float horizontalInput)
     {
         verticalInput = 1;
-        verticalInput = verticalInput - Mathf.Abs(horizontalInput) / 1.4f;
+        verticalInput = verticalInput - Mathf.Abs(horizontalInput) / 1.5f;
 
 
         return verticalInput;
     }
-    public void Start()
-    {
-        targetDir = nextCheckpoint.transform.position - this.gameObject.transform.position;
-    }
+
     private void FixedUpdate()
     {
         PathFinding();

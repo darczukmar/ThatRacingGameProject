@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class Race_manager : MonoBehaviour
 {
-    public List<AI_Handler> ai_Handler;
-    public GameObject[] cars;
-    public GameObject[] race;
-    public List<int> checkpointTracker;
+    public List<AI_Handler> ai_Handler;         // List of all AI Handlers pulled from cars 
+    public List<int> checkpointTracker;         // Each car has a index & stored int of current checkpoint to check progression.
+    public GameObject[] cars, race;             // Cars for GO with tag Player in scene , race for all GO with tag Checkpoint in scene.
+
 
     void Awake()
     {
