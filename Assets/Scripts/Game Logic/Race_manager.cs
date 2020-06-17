@@ -13,17 +13,16 @@ public class Race_manager : MonoBehaviour
     void Awake()
     {
         int count=0;
-        
+        race = GameObject.FindGameObjectsWithTag("Checkpoint");
         cars = GameObject.FindGameObjectsWithTag("Player");
         foreach(GameObject car in cars)
         {
-            checkpointTracker.Add(1);
+            checkpointTracker.Add(0);
             ai_Handler.Add(car.GetComponent<AI_Handler>());
             car.GetComponent<AI_Handler>().carIndex = count;
             car.GetComponent<AI_Handler>().nextCheckpoint = race[0];
             count++;
         }
-
     }
 
     public void CheckpointPassed(AI_Handler car,int thisCheckpoint)
@@ -34,8 +33,8 @@ public class Race_manager : MonoBehaviour
         {
             thisCheckpoint = 0;
         }
-
-        car.nextCheckpoint = race[thisCheckpoint];
+       car.nextCheckpointTrue=  AI_Additives.RandomPointInBounds(race[thisCheckpoint]);
+       car.nextCheckpoint = race[thisCheckpoint];
 
 
 
